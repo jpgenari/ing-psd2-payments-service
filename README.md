@@ -14,7 +14,6 @@ A small Spring Boot 3 service exposing a Berlin Group NextGenPSD2-style **single
 
 ```
 ing-psd2-payments-service/
-├── .vscode/                     # Editor layout + recommended extensions
 ├── browserstack.yml             # BrowserStack SDK config (credentials via env vars)
 ├── openapi.yaml                 # API contract (source of truth)
 ├── pom.xml
@@ -97,7 +96,3 @@ The console prints a link to the build on `automation.browserstack.com` at the e
 ## Demo: breaking the contract
 
 In `PaymentController.java`, find the `// DEMO STEP 5` comment and change `HttpStatus.BAD_REQUEST` to `HttpStatus.UNPROCESSABLE_ENTITY` for the missing-header response. Re-run the suite: the "Missing X-Request-ID" scenario fails (expected 400, got 422), which is a good starting point for failure triage with Test Companion.
-
-## Editor setup
-
-`.vscode/settings.json` hides the minimap and maps Cucumber glue/feature paths. `.vscode/extensions.json` recommends the Java pack, Maven, Cucumber, 42Crunch OpenAPI and BrowserStack Test Companion extensions.
