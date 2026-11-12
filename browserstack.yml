@@ -1,0 +1,13 @@
+userName: ${BROWSERSTACK_USERNAME}
+accessKey: ${BROWSERSTACK_ACCESS_KEY}
+projectName: ing-psd2-payments-service
+buildName: psd2-payments-bdd
+framework: cucumber-junit5
+platforms:
+  - os: Windows
+    osVersion: 11
+    browserName: chrome
+    browserVersion: latest
+parallelsPerPlatform: 1
+testObservability: true
+browserstackLocal: false

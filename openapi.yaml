@@ -1,0 +1,105 @@
+openapi: 3.0.3
+info:
+  title: ING PSD2 Payment Initiation Service API
+  version: 1.0.0
+  description: Berlin Group NextGenPSD2 compliant single payment initiation endpoint.
+paths:
+  /v1/payments:
+    post:
+      summary: Initiate a PSD2 SEPA Credit Transfer
+      operationId: initiatePayment
+      parameters:
+        - name: X-Request-ID
+          in: header
+          required: true
+          description: Unique UUIDv4 idempotency/correlation ID per PSD2 specification
+          schema:
+            type: string
+            format: uuid
+        - name: Authorization
+          in: header
+          required: true
+          description: OAuth2 Bearer access token with PIS (Payment Initiation Service) scope
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '201':
+          description: Payment initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '400':
+          description: Validation error or missing mandatory PSD2 header
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or expired OAuth2 bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient PSD2 PIS scope permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    PaymentRequest:
+      type: object
+      required:
+        - debtorIban
+        - creditorIban
+        - creditorName
+        - amount
+        - currency
+      properties:
+        debtorIban:
+          type: string
+          example: NL91ABNA0417164300
+        creditorIban:
+          type: string
+          example: DE89370400440532013000
+        creditorName:
+          type: string
+          example: Acme Cloud GmbH
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          example: 250.00
+        currency:
+          type: string
+          pattern: '^(EUR|GBP|USD|CHF)$'
+          example: EUR
+        remittanceInformation:
+          type: string
+          maxLength: 140
+          example: Invoice INV-2026-8841
+    PaymentResponse:
+      type: object
+      properties:
+        paymentId:
+          type: string
+        transactionStatus:
+          type: string
+          enum: [RCVD, ACCP, RJCT]
+        xRequestId:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
